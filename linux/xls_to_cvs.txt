@@ -1,0 +1,31 @@
+Sub SaveToCSVs()
+    Dim fDir As String
+    Dim wB As Workbook
+    Dim wS As Worksheet
+    Dim fPath As String
+    Dim sPath As String
+    fPath = "C:\1\"
+    sPath = "C:\2\"
+    fDir = Dir(fPath)
+    Do While (fDir <> "")
+        If Right(fDir, 4) = ".xls" Or Right(fDir, 5) = ".xlsx" Then
+            On Error Resume Next
+            Set wB = Workbooks.Open(fPath & fDir)
+            'MsgBox (wB.Name)
+            For Each wS In wB.Sheets
+                wS.SaveAs sPath & wB.Name & ".csv", xlCSV
+            Next wS
+            wB.Close False
+            Set wB = Nothing
+        End If
+        fDir = Dir
+        On Error GoTo 0
+    Loop
+End Sub
+
+
+
+http://blog.sina.com.cn/s/blog_70fa8d2a0102vs30.html
+
+
+Insert-Module 插入模块

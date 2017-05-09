@@ -15,6 +15,7 @@ import java.util.List;
 public class DealProvincePreferGroup {
     private static QueryRunner qr = new QueryRunner(DBConnection.getMasterDataSource());
     public static void main(String[] args) throws Exception {
+
         String queryAVG= "\t\tselect\n" +
                 "\t\t\t(\n" +
                 "\t\t\t\tselect\n" +

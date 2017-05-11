@@ -5,11 +5,17 @@
 #username = test
 #password = 123.com
 
-
+#工作连接
 driverClassName = net.sourceforge.jtds.jdbc.Driver
 url = jdbc:jtds:sqlserver://172.16.3.48:1433/bi
 username = bi_user
 password = b3lK1WccklVb2PPa
+
+#自己的连接
+#driverClassName = net.sourceforge.jtds.jdbc.Driver
+#url = jdbc:jtds:sqlserver://127.0.0.1:1433/bi
+#username = sa
+#password = 801.Dfw
 
 
 #driverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver

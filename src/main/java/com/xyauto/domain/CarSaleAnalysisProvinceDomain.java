@@ -6,7 +6,7 @@ import lombok.Data;
  * Created by zhangmg on 2017/5/5.
  */
 @Data
-public class CarSaleAnalysisDomain{
+public class CarSaleAnalysisProvinceDomain {
     private Integer ID;
     private Integer year_month;
     private String carserial;

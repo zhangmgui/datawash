@@ -31,4 +31,5 @@ public class CarSaleAnalysisCityDomain {
     private Integer city_allcar_plateVol_index; /*当地所有车型盘量指数 AAAAA程序处理*/
    // private Double wholeCountry_allcar_plateVol_proportion_avg;  /*全国所有车型盘量占比均值  AAAAA程序处理  就是地区个数  省份漏了这个字段*/
     private Integer thisMonthAreaCount; /*地区个数  */
+
 }

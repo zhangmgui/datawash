@@ -1,6 +1,6 @@
 package com.xyauto.main;
 
-import com.xyauto.domain.CarSaleAnalysisDomain;
+import com.xyauto.domain.CarSaleAnalysisProvinceDomain;
 import com.xyauto.utils.CalculateUtils;
 import com.xyauto.utils.DBConnection;
 import org.apache.commons.dbutils.QueryRunner;
@@ -48,13 +48,13 @@ public class CalculateProvinceCarSaleVoApp {
                 "\n" +
                 "from  city_sales_volume as csvOUT group by  year_month, province, carserial, x_ways_id ";
         long start = System.currentTimeMillis();
-        List<CarSaleAnalysisDomain> tempDataDomains = qr.query(someDataSQL, new BeanListHandler<CarSaleAnalysisDomain>(CarSaleAnalysisDomain.class));
+        List<CarSaleAnalysisProvinceDomain> tempDataDomains = qr.query(someDataSQL, new BeanListHandler<CarSaleAnalysisProvinceDomain>(CarSaleAnalysisProvinceDomain.class));
         long end = System.currentTimeMillis();
         System.out.println("查询消耗：" + ((end - start) / (1000)) + "秒");
        /* System.out.println("查询消耗：" + (end - start) + "ms");*/
-        Map<Integer, List<CarSaleAnalysisDomain>> yearMonthKeyMap = groupByMonth(tempDataDomains);
+        Map<Integer, List<CarSaleAnalysisProvinceDomain>> yearMonthKeyMap = groupByMonth(tempDataDomains);
 
-        for (CarSaleAnalysisDomain tempDataDomain : tempDataDomains) {
+        for (CarSaleAnalysisProvinceDomain tempDataDomain : tempDataDomains) {
             //当地该车型盘量占比
             tempDataDomain.setProvince_thiscar_plate_volume_proportion(CalculateUtils.div(tempDataDomain.getProvince_thiscar_sales_volume(),
                     tempDataDomain.getWholecountry_thiscar_sales_volume()));
@@ -104,7 +104,7 @@ public class CalculateProvinceCarSaleVoApp {
         System.out.println("数据入库耗时：" + ((end2 - end1) / (1000)) + "秒");
     }
     //修改上期销量
-    private static void updateGrowth(List<CarSaleAnalysisDomain> tempDataDomains) throws SQLException {
+    private static void updateGrowth(List<CarSaleAnalysisProvinceDomain> tempDataDomains) throws SQLException {
         String updateSQL = "UPDATE\n" +
                 "\t\tbi.dbo.province_month_sales_analysis\n" +
                 "\tSET\n" +
@@ -113,7 +113,7 @@ public class CalculateProvinceCarSaleVoApp {
                 "\t\tprovince_allcar_salevolume_growth_rate = ?,\n" +
                 "\t\tprovince_thiscar_growth_index = ?\n" +
                 "\tWHERE province = ? and x_ways_id=? and year_month = ?";
-        for (CarSaleAnalysisDomain tempDataDomain : tempDataDomains) {
+        for (CarSaleAnalysisProvinceDomain tempDataDomain : tempDataDomains) {
             qr.update(updateSQL,tempDataDomain.getLast_period_thiscar_sale_volume(),
                     tempDataDomain.getProvince_thiscar_growth_rate(),
                     tempDataDomain.getProvince_allcar_salevolume_growth_rate(),
@@ -126,35 +126,35 @@ public class CalculateProvinceCarSaleVoApp {
 
     }
 
-    private static void calculateMediaParam(List<CarSaleAnalysisDomain> tempDataDomains) {
-        Map<Integer, List<CarSaleAnalysisDomain>> yearKeyMap = groupByMonth(tempDataDomains);
+    private static void calculateMediaParam(List<CarSaleAnalysisProvinceDomain> tempDataDomains) {
+        Map<Integer, List<CarSaleAnalysisProvinceDomain>> yearKeyMap = groupByMonth(tempDataDomains);
 
-        Set<Map.Entry<Integer, List<CarSaleAnalysisDomain>>> set1 = yearKeyMap.entrySet();
-        for (Map.Entry<Integer, List<CarSaleAnalysisDomain>> entry1 : set1) {
-            List<CarSaleAnalysisDomain> list1 = entry1.getValue(); //年份中的分组
+        Set<Map.Entry<Integer, List<CarSaleAnalysisProvinceDomain>>> set1 = yearKeyMap.entrySet();
+        for (Map.Entry<Integer, List<CarSaleAnalysisProvinceDomain>> entry1 : set1) {
+            List<CarSaleAnalysisProvinceDomain> list1 = entry1.getValue(); //年份中的分组
             //thisMonthAreaCount
-            Map<String, List<CarSaleAnalysisDomain>> provKeyMap = groupByProvince(list1); //按照省份分组
-            Set<Map.Entry<String, List<CarSaleAnalysisDomain>>> setA = provKeyMap.entrySet();
+            Map<String, List<CarSaleAnalysisProvinceDomain>> provKeyMap = groupByProvince(list1); //按照省份分组
+            Set<Map.Entry<String, List<CarSaleAnalysisProvinceDomain>>> setA = provKeyMap.entrySet();
             int AreaCount = setA.size();
-            for (Map.Entry<String, List<CarSaleAnalysisDomain>> entry : setA) {
-                List<CarSaleAnalysisDomain> list2 = entry.getValue();  //年份-省份 组
-                for (CarSaleAnalysisDomain carSaleAnalysisDomain : list2) {
+            for (Map.Entry<String, List<CarSaleAnalysisProvinceDomain>> entry : setA) {
+                List<CarSaleAnalysisProvinceDomain> list2 = entry.getValue();  //年份-省份 组
+                for (CarSaleAnalysisProvinceDomain carSaleAnalysisDomain : list2) {
                     carSaleAnalysisDomain.setThisMonthAreaCount(AreaCount);
                 }
             }
 
             // wholecountry_thiscar_plate_volume_proportion_average 全国该车型盘量占比平均值
-            Map<String, List<CarSaleAnalysisDomain>> CSKeyMap = groupByCS(list1);
-            Set<Map.Entry<String, List<CarSaleAnalysisDomain>>> set2 = CSKeyMap.entrySet();
-            for (Map.Entry<String, List<CarSaleAnalysisDomain>> entry2 : set2) {
-                List<CarSaleAnalysisDomain> list2 = entry2.getValue(); //年份组中的车型分组
+            Map<String, List<CarSaleAnalysisProvinceDomain>> CSKeyMap = groupByCS(list1);
+            Set<Map.Entry<String, List<CarSaleAnalysisProvinceDomain>>> set2 = CSKeyMap.entrySet();
+            for (Map.Entry<String, List<CarSaleAnalysisProvinceDomain>> entry2 : set2) {
+                List<CarSaleAnalysisProvinceDomain> list2 = entry2.getValue(); //年份组中的车型分组
                 double wcpvSUM = 0;
                 double WCavg = 0; //全国该车型盘量平均值
-                for (CarSaleAnalysisDomain carSaleAnalysisDomain : list2) {
+                for (CarSaleAnalysisProvinceDomain carSaleAnalysisDomain : list2) {
                     wcpvSUM+=carSaleAnalysisDomain.getProvince_thiscar_plate_volume_proportion();
                 }
                 WCavg = CalculateUtils.div(wcpvSUM,list2.size());
-                for (CarSaleAnalysisDomain carSaleAnalysisDomain : list2) {
+                for (CarSaleAnalysisProvinceDomain carSaleAnalysisDomain : list2) {
                     carSaleAnalysisDomain.setWholecountry_thiscar_plate_volume_proportion_average(WCavg);
                 }
             }
@@ -164,7 +164,7 @@ public class CalculateProvinceCarSaleVoApp {
 
 
     //数据入库
-    private static void insertData(List<CarSaleAnalysisDomain> tempDataDomains) throws SQLException {
+    private static void insertData(List<CarSaleAnalysisProvinceDomain> tempDataDomains) throws SQLException {
 
         String inertSQL = "insert into province_month_sales_analysis(" +
                 "year_month," +
@@ -189,7 +189,7 @@ public class CalculateProvinceCarSaleVoApp {
                 "thisMonthAreaCount, " +
                 "province_allcar_platevolume_index)" +
                 "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        for (CarSaleAnalysisDomain tempDataDomain : tempDataDomains) {
+        for (CarSaleAnalysisProvinceDomain tempDataDomain : tempDataDomains) {
             qr.update(inertSQL, tempDataDomain.getYear_month(),
                     tempDataDomain.getCarserial(),
                     tempDataDomain.getX_ways_id(),
@@ -217,7 +217,7 @@ public class CalculateProvinceCarSaleVoApp {
 
 
     //获取上一期当地该车型的销量和该地所有车型的销量
-    private static Map<String, Integer> getLastMonthSaleVolume(Integer curMonth, String province, String x_ways_id, Map<Integer, List<CarSaleAnalysisDomain>> mapBYMonth) {
+    private static Map<String, Integer> getLastMonthSaleVolume(Integer curMonth, String province, String x_ways_id, Map<Integer, List<CarSaleAnalysisProvinceDomain>> mapBYMonth) {
         return lastMonthScan(curMonth-100, province, x_ways_id, mapBYMonth);
          /*Integer lastMonth = null;
                 if (curMonth.toString().endsWith("01")) { //如果是一月份，那就与去年一月比较
@@ -234,30 +234,30 @@ public class CalculateProvinceCarSaleVoApp {
     }
 
     //根据月份分组
-    public static Map<Integer, List<CarSaleAnalysisDomain>> groupByMonth(List<CarSaleAnalysisDomain> list) {
-        return list.stream().collect(Collectors.groupingBy(CarSaleAnalysisDomain::getYear_month));
+    public static Map<Integer, List<CarSaleAnalysisProvinceDomain>> groupByMonth(List<CarSaleAnalysisProvinceDomain> list) {
+        return list.stream().collect(Collectors.groupingBy(CarSaleAnalysisProvinceDomain::getYear_month));
     }
 
     //根据省份分组
-    public static Map<String, List<CarSaleAnalysisDomain>> groupByProvince(List<CarSaleAnalysisDomain> list) {
-        return list.stream().collect(Collectors.groupingBy(CarSaleAnalysisDomain::getProvince));
+    public static Map<String, List<CarSaleAnalysisProvinceDomain>> groupByProvince(List<CarSaleAnalysisProvinceDomain> list) {
+        return list.stream().collect(Collectors.groupingBy(CarSaleAnalysisProvinceDomain::getProvince));
     }
 
     //根据车型分组
-    public static Map<String, List<CarSaleAnalysisDomain>> groupByCS(List<CarSaleAnalysisDomain> list) {
-        return list.stream().collect(Collectors.groupingBy(CarSaleAnalysisDomain::getX_ways_id));
+    public static Map<String, List<CarSaleAnalysisProvinceDomain>> groupByCS(List<CarSaleAnalysisProvinceDomain> list) {
+        return list.stream().collect(Collectors.groupingBy(CarSaleAnalysisProvinceDomain::getX_ways_id));
     }
 
     //计算上一期本地所有车型销量和上个月该车型销量
-    public static Map<String, Integer> lastMonthScan(Integer lastMonth, String province, String x_ways_id, Map<Integer, List<CarSaleAnalysisDomain>> mapBYMonth) {
+    public static Map<String, Integer> lastMonthScan(Integer lastMonth, String province, String x_ways_id, Map<Integer, List<CarSaleAnalysisProvinceDomain>> mapBYMonth) {
         Integer lastMonthSV = 0;//当地该车型上个月销量
         Integer allCarInThisProvinceLastMonthSV = 0; //上月当地所有汽车销量
         HashMap<String, Integer> lastMonthLocalALLSaleAndOneSaleMap = new HashMap<>();
-        List<CarSaleAnalysisDomain> lastMonthList = mapBYMonth.get(lastMonth);
+        List<CarSaleAnalysisProvinceDomain> lastMonthList = mapBYMonth.get(lastMonth);
         if (null == lastMonthList) {
             return null;
         } else {
-            for (CarSaleAnalysisDomain carSaleAnalysisDomain : lastMonthList) {
+            for (CarSaleAnalysisProvinceDomain carSaleAnalysisDomain : lastMonthList) {
                 if (province.equals(carSaleAnalysisDomain.getProvince())) { //按月
                     allCarInThisProvinceLastMonthSV += carSaleAnalysisDomain.getProvince_thiscar_sales_volume();
                 }
@@ -272,26 +272,26 @@ public class CalculateProvinceCarSaleVoApp {
     }
 
 
-    public static void calculateFourIndex(List<CarSaleAnalysisDomain> tempDomains) throws SQLException {
+    public static void calculateFourIndex(List<CarSaleAnalysisProvinceDomain> tempDomains) throws SQLException {
 
-        Map<Integer, List<CarSaleAnalysisDomain>> map1 = tempDomains.stream().collect(Collectors.groupingBy(CarSaleAnalysisDomain::getYear_month));
-        Set<Map.Entry<Integer, List<CarSaleAnalysisDomain>>> yearkeyEntrys = map1.entrySet();
-        for (Map.Entry<Integer, List<CarSaleAnalysisDomain>> entry1 : yearkeyEntrys) {
-            List<CarSaleAnalysisDomain> CSADS = entry1.getValue(); //每个时间一组
-            Map<String, List<CarSaleAnalysisDomain>> provinceKeyMap = CSADS.stream().collect(Collectors.groupingBy(CarSaleAnalysisDomain::getProvince));
-            Set<Map.Entry<String, List<CarSaleAnalysisDomain>>> entr2 = provinceKeyMap.entrySet();
-            for (Map.Entry<String, List<CarSaleAnalysisDomain>> entry2 : entr2) {
-                List<CarSaleAnalysisDomain> CSADS2 = entry2.getValue(); //时间组中再按省份分组
-                CSADS2.sort(new Comparator<CarSaleAnalysisDomain>() {
+        Map<Integer, List<CarSaleAnalysisProvinceDomain>> map1 = tempDomains.stream().collect(Collectors.groupingBy(CarSaleAnalysisProvinceDomain::getYear_month));
+        Set<Map.Entry<Integer, List<CarSaleAnalysisProvinceDomain>>> yearkeyEntrys = map1.entrySet();
+        for (Map.Entry<Integer, List<CarSaleAnalysisProvinceDomain>> entry1 : yearkeyEntrys) {
+            List<CarSaleAnalysisProvinceDomain> CSADS = entry1.getValue(); //每个时间一组
+            Map<String, List<CarSaleAnalysisProvinceDomain>> provinceKeyMap = CSADS.stream().collect(Collectors.groupingBy(CarSaleAnalysisProvinceDomain::getProvince));
+            Set<Map.Entry<String, List<CarSaleAnalysisProvinceDomain>>> entr2 = provinceKeyMap.entrySet();
+            for (Map.Entry<String, List<CarSaleAnalysisProvinceDomain>> entry2 : entr2) {
+                List<CarSaleAnalysisProvinceDomain> CSADS2 = entry2.getValue(); //时间组中再按省份分组
+                CSADS2.sort(new Comparator<CarSaleAnalysisProvinceDomain>() {
                     @Override
-                    public int compare(CarSaleAnalysisDomain o1, CarSaleAnalysisDomain o2) {
+                    public int compare(CarSaleAnalysisProvinceDomain o1, CarSaleAnalysisProvinceDomain o2) {
                         return o1.getProvince_thiscar_preference_proportion().compareTo(o2.getProvince_thiscar_preference_proportion());
                     }
                 });
                 Collections.reverse(CSADS2);
                 Integer mainCarCount = 0; //贡献率前百分之95的车型个数
                 Double per = 0d; //控制0.95的标记
-                for (CarSaleAnalysisDomain csadBase : CSADS2) {
+                for (CarSaleAnalysisProvinceDomain csadBase : CSADS2) {
                     if (CalculateUtils.add(per, csadBase.getProvince_thiscar_preference_proportion()) < 0.95) {
                         per = CalculateUtils.add(per, csadBase.getProvince_thiscar_preference_proportion());
                         mainCarCount++;
@@ -299,7 +299,7 @@ public class CalculateProvinceCarSaleVoApp {
                         break;
                     }
                 }
-                for (CarSaleAnalysisDomain tempDomain : CSADS2) {
+                for (CarSaleAnalysisProvinceDomain tempDomain : CSADS2) {
                     //1、计算当地该车型盘量指数   （指数为整形）
                     double index1 = CalculateUtils.div(tempDomain.getProvince_thiscar_plate_volume_proportion(), tempDomain.getWholecountry_thiscar_plate_volume_proportion_average());
                     tempDomain.setProvince_thiscar_plate_volume_index(Integer.valueOf(CalculateUtils.formatDouble4(index1 * 100)));

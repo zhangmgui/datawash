@@ -18,7 +18,7 @@ public class CalculateMethod {
     private static QueryRunner qr = new QueryRunner(DBConnection.getMasterDataSource());
 
     public static void calculateProvinceLevel(List<MediaParamDomain> someDatas) {
-        //如果是省份，那就按月份算出全国平均值 高平均和低平均
+        //如果是省份，那就按月份算出全国所有车型 该指数的平均值 高平均和低平均
         Map<Integer, List<MediaParamDomain>> timeKeyMap = groupByMonth(someDatas);
         Set<Map.Entry<Integer, List<MediaParamDomain>>> entries = timeKeyMap.entrySet();
         for (Map.Entry<Integer, List<MediaParamDomain>> entry : entries) {
@@ -252,12 +252,12 @@ public class CalculateMethod {
 
 
     public static void calculateLevel(boolean isCity, List<MediaParamDomain> someDatas) {
-        if (isCity) {  //如果是城市，那就按月份省份分组，求省内该车型平均，高平均和低平均
+        if (isCity) {  //如果是城市，那就按月份省份分组，求省内所有车型平均，高平均和低平均
             Map<Integer, List<MediaParamDomain>> timeKeyMap = groupByMonth(someDatas);
             Set<Map.Entry<Integer, List<MediaParamDomain>>> entries = timeKeyMap.entrySet();
             for (Map.Entry<Integer, List<MediaParamDomain>> entry : entries) {
                 List<MediaParamDomain> list = entry.getValue();  //此list为月份中的组
-                Map<String, List<MediaParamDomain>> provinKeyMap = groupByProvince(list);
+                Map<String, List<MediaParamDomain>> provinKeyMap = groupByProvince(list); //按省分组
                 Set<Map.Entry<String, List<MediaParamDomain>>> entries1 = provinKeyMap.entrySet();
                 for (Map.Entry<String, List<MediaParamDomain>> entry1 : entries1) {
                     List<MediaParamDomain> list1 = entry1.getValue();  //月份中省份分组
@@ -265,7 +265,7 @@ public class CalculateMethod {
                     setLevel(avgMap, list1);
                 }
             }
-        } else { //如果是省份，那就按月份分组，求全国该车型平均，高平均和低平均
+        } else { //如果是省份，那就按月份分组，求全国所有车型平均，高平均和低平均
             calculateProvinceLevel(someDatas);
         }
     }

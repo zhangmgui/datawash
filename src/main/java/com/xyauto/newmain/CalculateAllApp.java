@@ -19,22 +19,22 @@ public class CalculateAllApp {
         long t1 = System.currentTimeMillis();
         System.out.println("运算开始");
         ExecutorService pool = Executors.newFixedThreadPool(6);
-      /*  Future submit1 = pool.submit(new MyCallable1(qr));
-        Future submit2 = pool.submit(new MyCallable2(qr));
+       Future submit1 = pool.submit(new MyCallable1(qr));
+       Future submit2 = pool.submit(new MyCallable2(qr));
         Future submit3 = pool.submit(new MyCallable3(qr));
-        Future submit4 = pool.submit(new MyCallable4(qr));*/
+        Future submit4 = pool.submit(new MyCallable4(qr));
         Future submit5 = pool.submit(new MyCallable5(qr));
-       // Future submit6 = pool.submit(new MyCallable6(qr));
-       // Integer o1 = (Integer)submit1.get();
-       /* Integer o2 = (Integer)submit2.get();
+        Future submit6 = pool.submit(new MyCallable6(qr));
+        Integer o1 = (Integer)submit1.get();
+        Integer o2 = (Integer)submit2.get();
         Integer o3 = (Integer)submit3.get();
         Integer o4 = (Integer)submit4.get();
         Integer o5 = (Integer)submit5.get();
-        Integer o6 = (Integer) submit6.get();*/
+        Integer o6 = (Integer) submit6.get();
         long t2 = System.currentTimeMillis();
-     /*   if(o1==1&&o2==1&&o3==1&&o4==1&&o5==1&&o6==1){
+       if(o1==1&&o2==1&&o3==1&&o4==1&&o5==1&&o6==1){
             System.out.println("运算结束，总共耗时：" + ((t2 - t1) / (1000)) + "秒");
-        }*/
+        }
         System.out.println("运算结束，总共耗时：" + ((t2 - t1) / (1000)) + "秒");
     }
 }

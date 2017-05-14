@@ -1,6 +1,6 @@
-package com.xyauto.newmain;
+package com.xyauto.main;
 
-import com.xyauto.newdomain.MediaParamDomain;
+import com.xyauto.domain.MediaParamDomain;
 import com.xyauto.utils.CalculateUtils;
 import com.xyauto.utils.Constants;
 import com.xyauto.utils.DBConnection;

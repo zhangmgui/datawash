@@ -1,6 +1,6 @@
 package com.xyauto.SingleCal;
 
-import com.xyauto.newdomain.MediaParamDomain;
+import com.xyauto.domain.MediaParamDomain;
 import com.xyauto.utils.InsertSqlUtils;
 import com.xyauto.utils.QuerySqlUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -9,9 +9,9 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.xyauto.newmain.CalculateMethod.calculateFiveIndex;
-import static com.xyauto.newmain.CalculateMethod.calculateLevel;
-import static com.xyauto.newmain.CalculateMethod.calculateOneNum;
+import static com.xyauto.main.CalculateMethod.calculateFiveIndex;
+import static com.xyauto.main.CalculateMethod.calculateLevel;
+import static com.xyauto.main.CalculateMethod.calculateOneNum;
 
 /**
  * Created by zhangmg on 2017/5/11.

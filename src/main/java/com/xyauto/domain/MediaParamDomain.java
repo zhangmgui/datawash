@@ -1,4 +1,4 @@
-package com.xyauto.newdomain;
+package com.xyauto.domain;
 
 import lombok.Data;
 

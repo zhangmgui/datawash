@@ -17,4 +17,13 @@ public class City {
     private Integer Taxi_city_NO;   //市级 出租汽车运营数_市辖区	No. Taxi_city
     private Integer  Urban_Road_Area_nation;   //城市道路面积	Urban Road Area_nation
     private Double  Population_city;    //市级 年末人口数	Population_city
+
+    public City() {
+    }
+
+    public City(Integer year, String province, String city) {
+        this.year = year;
+        this.province = province;
+        this.city = city;
+    }
 }

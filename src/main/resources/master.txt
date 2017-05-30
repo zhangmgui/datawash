@@ -5,11 +5,16 @@
 #username = test
 #password = 123.com
 
-
+#myDB
 driverClassName = net.sourceforge.jtds.jdbc.Driver
-url = jdbc:jtds:sqlserver://172.16.3.48:1433/bi
-username = bi_user
-password = b3lK1WccklVb2PPa
+url = jdbc:jtds:sqlserver://localhost:1433/bi
+username = sa
+password = abc.123
+
+#driverClassName = net.sourceforge.jtds.jdbc.Driver
+#url = jdbc:jtds:sqlserver://172.16.3.48:1433/bi
+#username = bi_user
+#password = b3lK1WccklVb2PPa
 
 
 #driverClassName = com.microsoft.sqlserver.jdbc.SQLServerDriver
